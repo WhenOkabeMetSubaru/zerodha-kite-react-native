@@ -1,0 +1,19 @@
+export type RootStackParamList = {
+    HomeScreen: undefined;
+    FundScreen:undefined;
+}
+
+export type WATCHLIST_SCREEN_HEADER_TITLE = "WatchList";
+export type ORDERS_SCREEN_HEADER_TITLE = "Orders";
+export type PORTFOLIO_SCREEN_HEADER_TITLE  = "Portfolio"
+export type BID_SCREEN_HEADER_TITLE = "Bids";
+export type ACCOUNT_SCREEN_HEADER_TITLE = "Account";
+
+
+export interface HEADER_PRIMARY_SCREEN_TITLE {
+    WATCHLIST:WATCHLIST_SCREEN_HEADER_TITLE,
+    ORDERS:ORDERS_SCREEN_HEADER_TITLE,
+    PORTFOLIO:PORTFOLIO_SCREEN_HEADER_TITLE,
+    BIDS:BID_SCREEN_HEADER_TITLE,
+    ACCOUNT:ACCOUNT_SCREEN_HEADER_TITLE
+}
