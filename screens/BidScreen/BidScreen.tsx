@@ -5,9 +5,21 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import EntypeIcon from 'react-native-vector-icons/Entypo'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'react-native';
+import DynamicHeader from '../../component/dynamicHeader';
+import { primaryScreenTitleConstants } from '../../app/constants/screen';
+import { useSharedValue } from 'react-native-reanimated';
+import Auctions from '../../component/screens/BidScreen/Auctions';
+import Ipo from '../../component/screens/BidScreen/Ipo';
+import GovtSecurities from '../../component/screens/BidScreen/GovtSecurities';
 
 
 const BidScreen = () => {
+
+  const [showStatus,setShowStatus] = useState(false);
+
+  const scrollOffsetY = useSharedValue(0);
 
   const [showOrderListDepth, setShowOrderListDepth] = useState(false);
 
@@ -89,14 +101,18 @@ const BidScreen = () => {
 
 
   const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-    third: ThirdRoute
+    first: ()=><Auctions scrollOffsetY={scrollOffsetY}/>,
+    second:()=> <Ipo scrollOffsetY={scrollOffsetY}/>,
+    third: ()=><GovtSecurities scrollOffsetY={scrollOffsetY}/>
   });
 
 
   return (
     <>
+      <SafeAreaView style={{ position: 'relative', flexDirection: 'column', flex: 1 }}>
+        <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
+        <DynamicHeader screenName={primaryScreenTitleConstants.BIDS} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
+
       <TabView
 
         navigationState={{ index, routes }}
@@ -130,6 +146,8 @@ const BidScreen = () => {
           />
         )}
       />
+      </DynamicHeader>
+      </SafeAreaView>
     </>
   )
 }

@@ -248,11 +248,11 @@ const FundScreen = () => {
         renderTabBar={props => (
           <TabBar
             {...props}
-            indicatorStyle={{ backgroundColor: '#0181ea' }}
+            indicatorStyle={{ backgroundColor: '#0181ea', flexDirection: 'row', justifyContent: 'center', width: 80, left: '15%' }}
             labelStyle={{ fontSize: 11.5, fontWeight: 600, width: '100%' }}
             activeColor='#0181ea'
             renderLabel={({ route, focused, color }) => (
-              <Text style={{ color }}>
+              <Text style={{ color, fontWeight: 600, minWidth: 120, textAlign: 'center' }}>
                 {route.title}
               </Text>
             )}

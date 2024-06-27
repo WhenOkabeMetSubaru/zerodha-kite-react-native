@@ -6,10 +6,19 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { CircleSpecial } from '../../component/extra/circleSpecial';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import EntypeIcon from 'react-native-vector-icons/Entypo'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DynamicHeader from '../../component/dynamicHeader';
+import { StatusBar } from 'react-native';
+import { primaryScreenTitleConstants } from '../../app/constants/screen';
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 
 const PortfolioScreen = () => {
 
   const [showOrderListDepth, setShowOrderListDepth] = useState(false);
+
+  const [showStatus,setShowStatus] = useState(false);
+
+  const scrollOffsetY = useSharedValue(0);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["90%"], []);
@@ -30,9 +39,18 @@ const PortfolioScreen = () => {
 
   }
 
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+
+    scrollOffsetY.value = event.contentOffset.y;
+
+  });
+
   const FirstRoute = () => (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ backgroundColor: 'white' }} >
+      <Animated.ScrollView
+        style={{ flex: 1, backgroundColor: 'white' }}
+        scrollEventThrottle={20}
+        onScroll={scrollHandler} showsVerticalScrollIndicator={false} >
 
         <View style={{ height: 180, backgroundColor: "#e7e7e7", position: 'relative' }}>
           <View style={{ backgroundColor: '#e7e7e7', height: 90 }}>
@@ -41,7 +59,7 @@ const PortfolioScreen = () => {
           <View style={{ backgroundColor: "white", height: 90 }}>
 
           </View>
-          <View style={{ height: 140, position: "absolute", backgroundColor: "white", bottom: 5, left: 20, right: 20, borderRadius: 4, elevation: 4 }}>
+          <View style={{ height: 140, position: "absolute", backgroundColor: "white", bottom: 5, left: 20, right: 20, borderRadius: 4, elevation: showStatus==true?0:4 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, paddingLeft: 20, paddingRight: 20 }}>
               <View style={{ width: '50%' }}>
                 <Text style={{ fontSize: 14, opacity: 0.4 }}>Invested</Text>
@@ -96,7 +114,7 @@ const PortfolioScreen = () => {
         </View>
 
 
-      </ScrollView>
+      </Animated.ScrollView>
       <View style={{ borderTopWidth: 0.5, borderTopColor: '#e7e7e7', height: 40, backgroundColor: 'white', position: 'absolute', left: 0, right: 0, bottom: 0, paddingLeft: 20, paddingRight: 20, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Text>
           Day's P&L
@@ -111,8 +129,10 @@ const PortfolioScreen = () => {
   );
 
   const SecondRoute = () => (
-    <ScrollView style={{ backgroundColor: 'white' }} >
-
+    <Animated.ScrollView
+      style={{ flex: 1, backgroundColor: 'white' }}
+      scrollEventThrottle={20}
+      onScroll={scrollHandler} showsVerticalScrollIndicator={false} >
 
       <View style={{ height: 120, backgroundColor: "#e7e7e7", position: 'relative' }}>
         <View style={{ backgroundColor: '#e7e7e7', height: 60 }}>
@@ -122,11 +142,11 @@ const PortfolioScreen = () => {
 
         </View>
 
-        <View style={{ height: 90, position: "absolute",rowGap:5, backgroundColor: "white", bottom: 15, left: 20, right: 20, borderRadius: 4, elevation: 4,justifyContent:'center',alignItems:'center' }}>
-          
-          <Text style={{opacity:0.35,fontSize:15}}>Total P&L</Text>
-          <Text style={{fontSize:20,color:'green'}}>+1,844.30</Text>
-          
+        <View style={{ height: 90, position: "absolute", rowGap: 5, backgroundColor: "white", bottom: 15, left: 20, right: 20, borderRadius: 4, elevation: showStatus==true?0:4, justifyContent: 'center', alignItems: 'center' }}>
+
+          <Text style={{ opacity: 0.35, fontSize: 15 }}>Total P&L</Text>
+          <Text style={{ fontSize: 20, color: 'green' }}>+1,844.30</Text>
+
         </View>
       </View>
 
@@ -144,8 +164,8 @@ const PortfolioScreen = () => {
       </View>
 
       <PortfolioScreenPositionDetails name="NIFTY JUNE 24000 CE" ltp='135.44' />
-      
-    </ScrollView>
+
+    </Animated.ScrollView>
   );
 
   const renderScene = SceneMap({
@@ -156,28 +176,37 @@ const PortfolioScreen = () => {
 
   return (
     <>
-      <TabView
+      <SafeAreaView style={{ position: 'relative', flexDirection: 'column', flex: 1 }}>
+        <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
+        <DynamicHeader screenName={primaryScreenTitleConstants.PORTFOLIO} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
 
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        renderTabBar={props => (
-          <TabBar
-            {...props}
-            indicatorStyle={{ backgroundColor: '#0181ea', flexDirection: 'row', justifyContent: 'center', width: 100, left: '13%' }}
-            labelStyle={{ fontSize: 11.5, fontWeight: 600, width: '100%' }}
-            activeColor='#0181ea'
-            renderLabel={({ route, focused, color }) => (
-              <Text style={{ color, fontWeight: 600, minWidth: 120, textAlign: 'center' }}>
-                {route.title}
-              </Text>
-            )}
-            inactiveColor='black'
+        <TabView
 
-            style={{ backgroundColor: "#e7e7e7", elevation: 0 }}
-          />
-        )}
-      />
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={(index)=>{
+            setIndex(index);
+            scrollOffsetY.value = 0;
+          }}
+          renderTabBar={props => (
+            <TabBar
+              {...props}
+              indicatorStyle={{ backgroundColor: '#0181ea', flexDirection: 'row', justifyContent: 'center', width: 100, left: '13%' }}
+              labelStyle={{ fontSize: 11.5, fontWeight: 600, width: '100%' }}
+              activeColor='#0181ea'
+              renderLabel={({ route, focused, color }) => (
+                <Text style={{ color, fontWeight: 600, minWidth: 120, textAlign: 'center' }}>
+                  {route.title}
+                </Text>
+              )}
+              inactiveColor='black'
+
+              style={{ backgroundColor: "#e7e7e7", elevation: 0 }}
+            />
+          )}
+        />
+        </DynamicHeader>
+      </SafeAreaView>
     </>
   )
 }
@@ -187,7 +216,7 @@ export default PortfolioScreen
 const styles = StyleSheet.create({})
 
 
-const PortfolioScreenStockDetails = ({ name = "", ltp = "",avg="",qty="",invested="",changed_percentaged=""}) => {
+const PortfolioScreenStockDetails = ({ name = "", ltp = "", avg = "", qty = "", invested = "", changed_percentaged = "" }) => {
 
   return (
     <View>
@@ -195,8 +224,8 @@ const PortfolioScreenStockDetails = ({ name = "", ltp = "",avg="",qty="",investe
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <View style={{ flexDirection: 'row', columnGap: 5 }}>
             <View style={{ flexDirection: 'row', columnGap: 3, alignItems: 'center' }}>
-              <Text style={{ opacity: 0.35,fontSize:12 }}>{qty}</Text>
-              <Text style={{fontSize:12}}>Qty.</Text>
+              <Text style={{ opacity: 0.35, fontSize: 12 }}>{qty}</Text>
+              <Text style={{ fontSize: 12 }}>Qty.</Text>
             </View>
             <Text>•</Text>
             <View style={{ flexDirection: 'row', columnGap: 3, alignItems: 'center' }}>
@@ -244,17 +273,17 @@ const PortfolioScreenPositionDetails = ({ name = "", ltp = "" }) => {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <View style={{ flexDirection: 'row', columnGap: 5 }}>
             <View style={{ flexDirection: 'row', columnGap: 3, alignItems: 'center' }}>
-              <Text style={{ opacity: 0.35,fontSize:12 }}>Qty.</Text>
-              <Text style={{ color:"#0484f7",fontSize:12}}>50</Text>
+              <Text style={{ opacity: 0.35, fontSize: 12 }}>Qty.</Text>
+              <Text style={{ color: "#0484f7", fontSize: 12 }}>50</Text>
             </View>
             <Text>•</Text>
             <View style={{ flexDirection: 'row', columnGap: 3, alignItems: 'center' }}>
-              <Text style={{ opacity: 0.35,fontSize:12 }}>Avg.</Text>
-              <Text style={{fontSize:12}}>5588.01</Text>
+              <Text style={{ opacity: 0.35, fontSize: 12 }}>Avg.</Text>
+              <Text style={{ fontSize: 12 }}>5588.01</Text>
             </View>
           </View>
-          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor:'#f2e7c5' ,paddingLeft:5,paddingRight:5,paddingTop:2,paddingBottom:2}}>
-            <Text style={{fontSize:11}}>MIS</Text>
+          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#f2e7c5', paddingLeft: 5, paddingRight: 5, paddingTop: 2, paddingBottom: 2 }}>
+            <Text style={{ fontSize: 11 }}>MIS</Text>
           </View>
         </View>
 
@@ -269,13 +298,13 @@ const PortfolioScreenPositionDetails = ({ name = "", ltp = "" }) => {
 
           <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
             <Text style={{ fontSize: 12, opacity: 0.35 }}>NFO</Text>
-            
+
           </View>
 
           <View style={{ flexDirection: 'row', columnGap: 3 }}>
             <Text style={{ fontSize: 12, opacity: 0.35 }}>LTP</Text>
             <Text style={{ fontSize: 11 }}>{ltp}</Text>
-           
+
           </View>
 
         </View>

@@ -56,10 +56,35 @@ export interface ORDER_SCREEN_COLORS {
 export type ORDER_FULL_BACKGROUND_COLORS = ORDER_BUY_TAG_BACKGROUND_COLOR |  ORDER_SELL_TAG_BACKGROUND_COLOR | ORDER_CANCELLED_STATUS_BACKGROUND_COLOR | ORDER_COMPLETED_STATUS_BACKGROUND_COLOR | ORDER_PENDING_STATUS_BACKGROUND_COLOR | ORDER_REJECTED_STATUS_BACKGROUND_COLOR ;
 export type ORDER_FULL_TEXT_COLORS = ORDER_BUY_TAG_TEXT_COLOR | ORDER_SELL_TAG_TEXT_COLOR | ORDER_CANCELLED_STATUS_TEXT_COLOR | ORDER_COMPLETED_STATUS_TEXT_COLOR | ORDER_PENDING_STATUS_TEXT_COLOR | ORDER_REJECTED_STATUS_TEXT_COLOR;  
 
+export type COMMODITY_TYPE = 'equity' | 'f&o' | 'mutual_funds' | 'ipo' | 'bonds';
 
 export interface HANDLE_ORDER_STATUS_FUNC_PROPS {
     BACKGROUND_COLOR?:ORDER_FULL_BACKGROUND_COLORS,
     TEXT_COLOR?:ORDER_FULL_TEXT_COLORS,
     BUTTON_TITLE?:string
 
+}
+
+export interface ORDER {
+    order_type: orderTypePrimary;
+    order_status: orderStatusPrimary;
+    created_by: string; 
+    commodity_type: COMMODITY_TYPE;
+    trade_type?: string; 
+    order_placed_type_info?: string; 
+    order_primary_type?: string;
+    item?: string; 
+    quantity: number;
+    placed_price?: number; 
+    order_placed_at_price?: number; 
+    trigger?: {
+        flag: boolean;
+        price: number;
+    };
+    tags?: string[]; 
+    created_At: Date;
+    executed_At: Date;
+    validity?: string; 
+    stop_loss_trigger?: number; 
+    num_of_legs?: number; 
 }
