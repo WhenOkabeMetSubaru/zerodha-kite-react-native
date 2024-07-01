@@ -59,12 +59,12 @@ export const StockSearchStockComponent =({stock,isAdded,addStockToWatchList,dele
 
     const handleAddStock = ()=>{
 
-        console.log(watchListId)
+        
         addStockToWatchList({watchId:watchListId,stockId:stock?._id}).then((res:any)=>{
             if(res?.data?.error==false){
                 setAddedState(!addedState);
             }
-            console.log(res)
+            
         })
 
     }
@@ -75,21 +75,21 @@ export const StockSearchStockComponent =({stock,isAdded,addStockToWatchList,dele
             if (res?.data?.error == false) {
                 setAddedState(!addedState);
             }
-            console.log(res)
+            
         })
 
     }
     
     return (
         <Pressable style={{ height: 80, paddingHorizontal: 20, backgroundColor: 'white', borderBottomWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <View style={{ flexDirection: 'row', columnGap: 10, alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', columnGap: 10, alignItems: 'center',width:'70%' }}>
                 <View style={{ justifyContent: 'center', backgroundColor: STOCK_SEARCH_SCREEN_COLORS.STOCK_SEARCH_NSE_TAG_BACKGROUND_COLOR, alignItems: 'center', paddingHorizontal: 7, height: 25, borderRadius: 2 }}>
                     <Text style={{ color: STOCK_SEARCH_SCREEN_COLORS.STOCK_SEARCH_NSE_TAG_TEXT_COLOR, fontSize: 12 }}>NSE</Text>
 
                 </View>
                 <View style={{ rowGap: 2 }}>
-                    <Text>{stock.name}</Text>
-                    <Text style={{ opacity: 0.4, fontSize: 13 }}>{stock.name}</Text>
+                    <Text numberOfLines={1}>{stock.name?.toUpperCase()}</Text>
+                    <Text numberOfLines={1}   style={{ opacity: 0.4, fontSize: 13}}>{stock.complete_name?.toUpperCase()}</Text>
                 </View>
             </View>
             <View>

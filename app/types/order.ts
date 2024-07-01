@@ -1,3 +1,5 @@
+import { API_RESPONSE_DEFAULT } from "./global";
+
 export type orderStatusPrimary = ORDER_PENDING_STATUS | ORDER_REJECTED_STATUS | ORDER_COMPLETE_STATUS | ORDER_CANCELLED_STATUS;
 
 export type orderTypePrimary = ORDER_TYPE_BUY | ORDER_TYPE_SELL;
@@ -57,6 +59,9 @@ export type ORDER_FULL_BACKGROUND_COLORS = ORDER_BUY_TAG_BACKGROUND_COLOR |  ORD
 export type ORDER_FULL_TEXT_COLORS = ORDER_BUY_TAG_TEXT_COLOR | ORDER_SELL_TAG_TEXT_COLOR | ORDER_CANCELLED_STATUS_TEXT_COLOR | ORDER_COMPLETED_STATUS_TEXT_COLOR | ORDER_PENDING_STATUS_TEXT_COLOR | ORDER_REJECTED_STATUS_TEXT_COLOR;  
 
 export type COMMODITY_TYPE = 'equity' | 'f&o' | 'mutual_funds' | 'ipo' | 'bonds';
+export type ORDER_STATUS_IN_HOLDINGS  = "bought" | "sold";
+export type ORDER_PRIMARY_TYPE = "regular" | "co" | "amo" | "iceberg";
+export type ORDER_PRIMARY_TYPE_INFO = "market" | "limit" | "sl" | "sl-m";
 
 export interface HANDLE_ORDER_STATUS_FUNC_PROPS {
     BACKGROUND_COLOR?:ORDER_FULL_BACKGROUND_COLORS,
@@ -69,10 +74,11 @@ export interface ORDER {
     order_type: orderTypePrimary;
     order_status: orderStatusPrimary;
     created_by: string; 
+    order_status_in_holdings:ORDER_STATUS_IN_HOLDINGS;
     commodity_type: COMMODITY_TYPE;
     trade_type?: string; 
-    order_placed_type_info?: string; 
-    order_primary_type?: string;
+    order_placed_type_info?: ORDER_PRIMARY_TYPE_INFO; 
+    order_primary_type?: ORDER_PRIMARY_TYPE;
     item?: string; 
     quantity: number;
     placed_price?: number; 
@@ -87,4 +93,16 @@ export interface ORDER {
     validity?: string; 
     stop_loss_trigger?: number; 
     num_of_legs?: number; 
+}
+
+export interface ORDER_RESPONSE_SINGLE extends API_RESPONSE_DEFAULT {
+    error:boolean;
+    info:string;
+    data:ORDER;
+}
+
+export interface ORDER_RESPONSE_MULTIPLE extends API_RESPONSE_DEFAULT {
+    error: boolean;
+    info: string;
+    data: ORDER [];
 }

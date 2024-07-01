@@ -32,18 +32,17 @@ const DynamicHeader = ({children,showStatus,setShowStatus,scrollOffsetY,screenNa
 
     const handleButtonClickOpen = () => {
         
-        // boxHeight.value = withTiming(400,
-        //     {
-        //         duration:250,
-        //         easing: Easing.in(Easing.bezierFn(0.19, 0.71, 0.27, 1.03)),
-        //         reduceMotion:ReduceMotion.System
-        //     }
-        // )
-        boxHeight.value = withSpring(400,{
-            damping:1000,
-            stiffness:100,
+        boxHeight.value = withTiming(400,
+            {
+                duration:250,
+                easing: Easing.in(Easing.poly(1))
+            }
+        )
+        // boxHeight.value = withSpring(400,{
+        //     damping:2000,
+        //     stiffness:250,
          
-        })
+        // })
         setShowStatus(!showOverview)
         setShowOverView(!showOverview)
     };
@@ -56,8 +55,8 @@ const DynamicHeader = ({children,showStatus,setShowStatus,scrollOffsetY,screenNa
 
         // });
         boxHeight.value = withSpring(0, {
-            damping: 500,
-            stiffness: 300
+            damping: 1000,
+            stiffness: 200
         })
         setShowStatus(!showOverview)
         setShowOverView(!showOverview)
@@ -65,7 +64,7 @@ const DynamicHeader = ({children,showStatus,setShowStatus,scrollOffsetY,screenNa
 
     const heightIncreaseAnimationStyle = useAnimatedStyle(() => {
         return {
-            top: boxHeight.value,
+            height: boxHeight.value,
         };
     });
 
@@ -85,7 +84,7 @@ const DynamicHeader = ({children,showStatus,setShowStatus,scrollOffsetY,screenNa
     })
 
     const headerHeightStyles = useAnimatedStyle(()=>{
-        const heightStyleCustom = interpolate(Math.abs(scrollOffsetY.value), [0, 200], [Max_Header_Height, Min_Header_Height], Extrapolation.CLAMP);
+        const heightStyleCustom = interpolate(Math.abs(scrollOffsetY.value), [0, 150], [Max_Header_Height, Min_Header_Height], Extrapolation.CLAMP);
         return {
             height: withSpring(heightStyleCustom,{damping:100,stiffness:1000})
         }
@@ -95,7 +94,7 @@ const DynamicHeader = ({children,showStatus,setShowStatus,scrollOffsetY,screenNa
 
   return (
       <>
-          <Animated.View style={[{ backgroundColor: '#e7e7e7', position: 'absolute' }]}>
+          <Animated.View style={[{ backgroundColor: '#e7e7e7', position: 'relative' }, heightIncreaseAnimationStyle]}>
                 
               <View style={{ marginTop: 10, paddingLeft: 15, paddingRight: 15, flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
                   <Animated.Text style={[{ fontSize: 25, fontWeight: 600, width: '40%' }, overViewBoxStyles]}>Overview</Animated.Text>
@@ -150,7 +149,7 @@ const DynamicHeader = ({children,showStatus,setShowStatus,scrollOffsetY,screenNa
               </View>
 
           </Animated.View>
-          <Animated.View style={[{ flexDirection: 'column', flex: 1 }, mainBoxStyles, heightIncreaseAnimationStyle]}>
+          <Animated.View style={[{ flexDirection: 'column', flex: 1 }, mainBoxStyles]}>
               <Animated.View style={[{ backgroundColor: '#e7e7e7', flexDirection: "row", justifyContent: 'space-between', paddingLeft: 15, paddingRight: 15, alignItems: 'center' },headerHeightStyles]}>
                   <Text style={{ fontSize: 25, fontWeight: 600, width: '40%' }}>{screenName}</Text>
                   <FeatureIcon onPress={() => {handleButtonClickOpen()}} name="chevron-down" size={35} />

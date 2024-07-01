@@ -1,5 +1,5 @@
 
-import { Pressable, StatusBar, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { ActivityIndicator, Pressable, StatusBar, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Icon, Image, SearchBar } from 'react-native-elements'
@@ -19,9 +19,9 @@ import Animated, { Easing, Extrapolation, interpolate, useAnimatedScrollHandler,
 import LineChartComponent from '../../component/charts/lineChart'
 import DynamicHeader from '../../component/dynamicHeader'
 import { primaryScreenTitleConstants } from '../../app/constants/screen'
-import { useGetAllWatchListByUserQuery } from '../../features/slices/userApiSlice'
+import { useGetAllWatchListByUserQuery, useGetUserByTokenQuery } from '../../features/slices/userApiSlice'
 import TabDataWatchListHome from '../../component/screens/HomeScreen/TabData'
-import { WATCHLIST } from '../../app/types/user'
+import { USER, WATCHLIST } from '../../app/types/user'
 
 
 
@@ -49,6 +49,8 @@ const HomeScreen = () => {
             });
             setRoutes(itemData);
             
+        }else{
+            getWatchlistData?.refetch()
         }
         
 
@@ -64,18 +66,46 @@ const HomeScreen = () => {
     const [index, setIndex] = useState(0);
   
    
-    const renderScene = SceneMap({
-        0: ()=><TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[0]?._id}  showStatus={showStatus} setShowStatus={setShowStatus}/>,
-        1: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[1]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
-        2: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[2]?._id} showStatus={showStatus} setShowStatus={setShowStatus} /> ,
-        3: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[3]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
-        4: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[4]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
-        5: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[5]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
-        6: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[6]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
+    // const renderScene = SceneMap({
+    //     0: ()=><TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[0]?._id}  showStatus={showStatus} setShowStatus={setShowStatus}/>,
+    //     1: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[1]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
+    //     2: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[2]?._id} showStatus={showStatus} setShowStatus={setShowStatus} /> ,
+    //     3: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[3]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
+    //     4: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[4]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
+    //     5: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[5]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
+    //     6: () => <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[6]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />,
 
 
-    });
+    // });
 
+
+    const renderScene = ({route}:{route?:any})=>{
+        switch(route.key){
+            case '0':
+                return <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[0]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />
+            
+            case '1':
+                return <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[1]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />
+        
+            case '2':
+                return <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[2]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />
+            
+            case '3':
+                return <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[3]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />
+            
+            case '4':
+                return <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[4]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />
+
+            case '5':
+                return <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[5]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />
+            
+            case '6':
+                return <TabDataWatchListHome scrollOffsetY={scrollOffsetY} watchListId={watchListData[6]?._id} showStatus={showStatus} setShowStatus={setShowStatus} />
+        
+            default:
+                return null;
+            }
+    }
    
 
     return (
@@ -83,31 +113,37 @@ const HomeScreen = () => {
             <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
             <DynamicHeader screenName={primaryScreenTitleConstants.WATCHLIST} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
           
-            
-                
-                    <TabView
+            {
+                getWatchlistData.isLoading==false?
 
-                        navigationState={{ index, routes }}
-                        renderScene={renderScene}
-                        onIndexChange={(index)=>{
-                            setIndex(index);
-                            scrollOffsetY.value = 0;
-                        }}
-                        
-                        renderTabBar={props => (
-                            <TabBar
-                                {...props}
-                                onTabLongPress={()=>navigation.navigate("EditWatchListScreen",watchListData[index])}
-                                indicatorStyle={{ backgroundColor: '#0181ea' }}
-                                tabStyle={{ width: 100, elevation: 0 }}
-                                labelStyle={{ fontSize: 11, fontWeight: 500, width: '100%' }}
-                                scrollEnabled={true}
-                                activeColor='#0181ea'
-                                inactiveColor='gray'
-                                style={{ backgroundColor: "#e7e7e7", elevation: 0 }}
-                            />
-                        )}
-                    />
+                        <TabView
+                            lazy={true}
+                            navigationState={{ index, routes }}
+                            renderScene={renderScene}
+                            onIndexChange={(index) => {
+                                setIndex(index);
+                                scrollOffsetY.value = 0;
+                            }}
+
+                            renderTabBar={props => (
+                                <TabBar
+                                    {...props}
+                                    onTabLongPress={() => navigation.navigate("EditWatchListScreen", {_id: watchListData[index]?._id })}
+                                    indicatorStyle={{ backgroundColor: '#0181ea' }}
+                                    tabStyle={{ width: 100, elevation: 0 }}
+                                    labelStyle={{ fontSize: 11, fontWeight: 500, width: '100%' }}
+                                    scrollEnabled={true}
+                                    activeColor='#0181ea'
+                                    inactiveColor='gray'
+                                    style={{ backgroundColor: "#e7e7e7", elevation: 0 }}
+                                />
+                            )}
+                        />:
+                        <View style={{height:'100%',justifyContent:'center',alignItems:'center',backgroundColor:'white'}}>
+                            <ActivityIndicator size={"large"} color="blue"/>
+                        </View>
+            }
+               
 
 
                    
@@ -126,6 +162,11 @@ const styles = StyleSheet.create({})
 export const TabBarFinal = () => {
 
     const Tab = createBottomTabNavigator();
+
+    const userDetails = useGetUserByTokenQuery({});
+
+    const userData:USER = userDetails?.data?.data || {};
+
 
 
     return (
@@ -169,7 +210,7 @@ export const TabBarFinal = () => {
             <Tab.Screen options={{ headerShown: false, title: "Orders", headerStyle: { backgroundColor: '#e7e7e7' } }} name="Orders" component={OrderScreen} />
             <Tab.Screen options={{ headerShown: false, title: "Portfolio", headerStyle: { backgroundColor: '#e7e7e7' } }} name="Portfolio" component={PortfolioScreen} />
             <Tab.Screen options={{ headerShown: false, title: "Bids", headerStyle: { backgroundColor: '#e7e7e7' } }} name="Bids" component={BidScreen} />
-            <Tab.Screen options={{ headerShown: false, title: "Account", headerStyle: { backgroundColor: '#e7e7e7' } }} name="Profile" component={ProfileScreen} />
+            <Tab.Screen options={{ headerShown: false, title: userData.firstName?.toUpperCase() || "Account", headerStyle: { backgroundColor: '#e7e7e7' } }} name="Profile" component={ProfileScreen} />
         </Tab.Navigator>
     )
 }

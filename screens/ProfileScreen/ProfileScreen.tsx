@@ -14,11 +14,17 @@ import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native
 import auth from '../../features/helpers/auth'
 import { useAppDispatch } from '../../features/hooks/hooks'
 import { setLogout } from '../../features/slices/user'
+import { useGetUserByTokenQuery } from '../../features/slices/userApiSlice'
+import { USER } from '../../app/types/user'
 
 const ProfileScreen = () => {
 
   const navigation = useNavigation<any>();
   const [showStatus, setShowStatus] = useState<Boolean>(false);
+
+  //data hooks
+  const userDetails = useGetUserByTokenQuery({});
+  let userData:USER = userDetails?.data?.data || {};
 
   const dispatch = useAppDispatch();
 
@@ -58,10 +64,10 @@ const ProfileScreen = () => {
       <SafeAreaView style={{ position: 'relative', flexDirection: 'column', flex: 1 }}>
         <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
         <DynamicHeader screenName={primaryScreenTitleConstants.BIDS} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
-          <View style={{position:'relative',backgroundColor:'transparent',height:50}}>
+          <View style={{position:'relative',backgroundColor:'#e7e7e7',height:45}}>
             <View style={{ backgroundColor: "#e7e7e7", position: 'absolute', top:0,left: 0, right: 0 }}>
-              <View style={{ paddingLeft: 15, paddingRight: 20, paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 18 }}>Harvy T.</Text>
+              <View style={{ paddingLeft: 15, paddingRight: 20, paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between',alignItems:'center' }}>
+                <Text style={{ fontSize: 18 }}>{userData?.firstName + " " + userData?.lastName}</Text>
                 <FeatherIcon name="bell" size={20} />
               </View>
             </View>
@@ -83,11 +89,11 @@ const ProfileScreen = () => {
                 <View style={{ height: 120, elevation: showStatus==true?0:3, position: 'absolute', bottom: 1, left: 15, right: 20, backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: 3, padding: 20 }}>
                   <View>
                     <Text style={{ fontSize: 18 }}>DD1877</Text>
-                    <Text style={{ fontSize: 11, marginTop: 4 }}>harvery@gmail.com</Text>
+                    <Text style={{ fontSize: 11, marginTop: 4 }}>{userData?.email}</Text>
                   </View>
                   <View style={{ width: 90, height: 90, borderRadius: 100, backgroundColor: '#e6efff', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ fontSize: 35, color: '#9ec1ff' }}>
-                      HS
+                      {userData?.firstName?.charAt(0).toUpperCase() + userData?.lastName?.charAt(0)?.toUpperCase()}
                     </Text>
                   </View>
                 </View>

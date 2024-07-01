@@ -113,7 +113,7 @@ const StockSearchScreen = ({ navigation }: { navigation?: any }) => {
 
       <View style={{ height: 50, borderBottomWidth: 0.3, borderColor: '#e7e7e7', columnGap: 5, flexDirection: 'row', alignItems: 'center', width: '100%', paddingLeft: 10, paddingRight: 10 }}>
         <Pressable onPress={() => { navigation.goBack() }}><FeatherIcon name='arrow-left' size={25} /></Pressable>
-        <TextInput value={searchText} onChangeText={(text) => { setSearchText(text); }} placeholder='Search eg:infy bse, nifty fut' selection={{ start: searchText.length, end: searchText.length }} style={{ width: '80%', paddingLeft: 10, paddingRight: 10 }} />
+        <TextInput autoFocus={true} value={searchText} onChangeText={(text) => { setSearchText(text); }} placeholder='Search eg:infy bse, nifty fut' selection={{ start: searchText.length, end: searchText.length }} style={{ width: '80%', paddingLeft: 10, paddingRight: 10 }} />
         {
           searchText?.length > 0 &&
           <Pressable onPress={() => {

@@ -3,22 +3,26 @@ import React, { useState } from 'react'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { CircleSpecial } from '../../../component/extra/circleSpecial'
+import { useGetUserByTokenQuery } from '../../../features/slices/userApiSlice'
+import { USER } from '../../../app/types/user'
 
 const UserProfileScreen = () => {
 
     const [sessionState, setSessionState] = useState(false);
+    const userDetails = useGetUserByTokenQuery({});
+    let userData: USER = userDetails?.data?.data || {};
 
     return (
         <ScrollView style={{ backgroundColor: 'white', height: '100%' }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: 3, paddingLeft: 23, paddingRight: 23, marginTop: 10 }}>
                 <View>
-                    <Text style={{ fontSize: 18 }}>Harvey Trusta</Text>
+                    <Text style={{ fontSize: 18 }}>{userData?.firstName + " " + userData?.lastName}</Text>
                     <Text style={{ fontSize: 12, marginTop: 4, color: 'gray' }}>VDCK 177</Text>
                 </View>
                 <View style={{ width: 90, height: 90, position: 'relative' }}>
                     <View style={{ width: 90, height: 90, borderRadius: 100, backgroundColor: '#e6efff', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ fontSize: 35, color: '#9ec1ff' }}>
-                            HS
+                            {userData?.firstName?.charAt(0).toUpperCase() + userData?.lastName?.charAt(0)?.toUpperCase()}
                         </Text>
                     </View>
                     <View style={{ width: 25, position: 'absolute', right: 2, bottom: 2, height: 25, backgroundColor: '#3a91f2', borderRadius: 100, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
@@ -48,7 +52,7 @@ const UserProfileScreen = () => {
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Text style={{ color: 'gray' }}>Email</Text>
-                    <Text style={{}}>HarveyTest@gmail.com</Text>
+                    <Text style={{}}>{userData?.email}</Text>
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

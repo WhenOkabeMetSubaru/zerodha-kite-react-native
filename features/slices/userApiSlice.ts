@@ -55,13 +55,19 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 url:`api/v1/user/watchlist/${watchId}/single`,
                 method:'GET'
             })
+        }),
+        checkTokenValidity:builder.query({
+            query:()=>({
+                url:"api/v1/user/token/check",
+                method:"GET"
+            })
         })
     })
 })
 
 
 export const { useLoginUserMutation, useGetUserByTokenQuery,useSignupMutation,useUpdateWatchListByIDMutation,
-    useAddStockToWatchListMutation,useGetWatchListByIDQuery,
+    useAddStockToWatchListMutation,useGetWatchListByIDQuery,useCheckTokenValidityQuery,useLazyCheckTokenValidityQuery,
     useDeleteStockFromWatchListMutation,useGetAllWatchListByUserQuery,useGetAllStocksByWatchListQuery, util: { getRunningQueryThunk, getRunningQueriesThunk } } = userApiSlice;
 
 export const { getUserByToken } = userApiSlice.endpoints;

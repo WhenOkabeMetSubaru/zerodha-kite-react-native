@@ -25,6 +25,13 @@ export const orderApiSlice = apiSlice.injectEndpoints({ // No base URL needed no
         deleteOrderByID: builder.mutation({
             query: ({orderId}) => ({ url: `/api/v1/orders/${orderId}`, method: 'DELETE' }),
         }),
+        placeBuyOrder:builder.mutation({
+            query:({orderDetails})=>({
+                url:'/api/v1/order/add',
+                method:"POST",
+                body:JSON.stringify(orderDetails)
+            })
+        })
     }),
 });
 
@@ -36,4 +43,5 @@ export const {
     useAddNewOrderMutation,
     useUpdateOrderByIDMutation,
     useDeleteOrderByIDMutation,
+    usePlaceBuyOrderMutation
 } = orderApiSlice;

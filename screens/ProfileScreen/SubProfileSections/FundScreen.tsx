@@ -5,19 +5,15 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import FeatureIcon from 'react-native-vector-icons/Feather'
 import { ScrollView } from 'react-native-gesture-handler';
 import { CircleSpecial } from '../../../component/extra/circleSpecial';
+import { useGetUserByTokenQuery } from '../../../features/slices/userApiSlice';
+import { USER } from '../../../app/types/user';
+import { handleConvertNumberToIndianSystem } from '../../../component/common/priceFunctions/currencyConverter';
 
 const FundScreen = () => {
 
-  const [showOrderListDepth, setShowOrderListDepth] = useState(false);
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["90%"], []);
-
-  const handleSheetChanges = useCallback((index: number) => {
-
-  }, [])
-
-  const layout = useWindowDimensions();
+  //data hooks 
+  const userDetails = useGetUserByTokenQuery({});
+  let userData: USER = userDetails?.data?.data || [];
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -40,7 +36,7 @@ const FundScreen = () => {
             <Text style={{ color: 'gray', fontSize: 12 }}>Available margin (Cash + Collateral)</Text>
             <FeatureIcon name="info" color="#3a91f2" size={16} />
           </View>
-          <Text style={{ fontSize: 28, fontWeight: 600, width: '100%', textAlign: 'center', color: "#3a91f2" }}>₹10,22,512.30</Text>
+          <Text style={{ fontSize: 28, fontWeight: 600, width: '100%', textAlign: 'center', color: "#3a91f2" }}>{handleConvertNumberToIndianSystem({digit: userData.equity_amount })}</Text>
           <View style={{ flexDirection: 'row', columnGap: 7, alignItems: 'center' }}>
             <CircleSpecial/>
             <Text style={{ color: "#3a91f2", fontSize: 14 }}>View Statement</Text>
@@ -67,11 +63,11 @@ const FundScreen = () => {
       <View style={{margin:20,flexDirection:'row',justifyContent:"space-around"}}>
         <View style={{flexDirection:'column',alignItems:'center',rowGap:5,width:'40%'}}>
           <Text style={{fontSize:11,color:'gray'}}>Available cash</Text>
-          <Text style={{ fontSize: 20, fontWeight: 600, width: '100%', textAlign: 'center', color:'#474b48'}}>10,22,512.30</Text>
+          <Text style={{ fontSize: 20, fontWeight: 600, width: '100%', textAlign: 'center', color:'#474b48'}}>{handleConvertNumberToIndianSystem({digit:userData.equity_amount})}</Text>
         </View>
         <View style={{ flexDirection: 'column', alignItems: 'center', rowGap: 5, width: '40%' }}>
           <Text style={{ fontSize: 11, color: 'gray' }}>Used margin</Text>
-          <Text style={{ fontSize: 20, fontWeight: 600, width: '100%', textAlign: 'center', color: '#474b48' }}>87,545.41</Text>
+          <Text style={{ fontSize: 20, fontWeight: 600, width: '100%', textAlign: 'center', color: '#474b48' }}>0.00</Text>
         </View>
       </View>
 
@@ -81,7 +77,7 @@ const FundScreen = () => {
       <View style={{ marginTop: 25 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#fbfbfb', height: 30, paddingLeft: 20, paddingRight: 20, alignItems: 'center' }}>
           <Text style={{ color: '#474b48' }}>Opening balance</Text>
-          <Text>0.00</Text>
+          <Text></Text>
         </View>
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'white', height: 30, paddingLeft: 20, paddingRight: 20, alignItems: 'center' }}>
@@ -152,7 +148,7 @@ const FundScreen = () => {
             <Text style={{ color: 'gray', fontSize: 12 }}>Available margin (Cash)</Text>
             <FeatureIcon name="info" color="#3a91f2" size={16} />
           </View>
-          <Text style={{ fontSize: 28, fontWeight: 600, width: '100%', textAlign: 'center', color: "#3a91f2" }}>₹0.30</Text>
+          <Text style={{ fontSize: 28, fontWeight: 600, width: '100%', textAlign: 'center', color: "#3a91f2" }}>{handleConvertNumberToIndianSystem({digit:userData?.commodity_amount})}</Text>
           <View style={{ flexDirection: 'row', columnGap: 7, alignItems: 'center' }}>
             <CircleSpecial/>
             <Text style={{ color: "#3a91f2", fontSize: 14 }}>View Statement</Text>
@@ -179,7 +175,7 @@ const FundScreen = () => {
       <View style={{ margin: 20, flexDirection: 'row', justifyContent: "space-around" }}>
         <View style={{ flexDirection: 'column', alignItems: 'center', rowGap: 5, width: '40%' }}>
           <Text style={{ fontSize: 11, color: 'gray' }}>Available cash</Text>
-          <Text style={{ fontSize: 20, fontWeight: 600, width: '100%', textAlign: 'center', color: '#474b48' }}>0.30</Text>
+          <Text style={{ fontSize: 20, fontWeight: 600, width: '100%', textAlign: 'center', color: '#474b48' }}>{handleConvertNumberToIndianSystem({digit:userData?.commodity_amount})}</Text>
         </View>
         <View style={{ flexDirection: 'column', alignItems: 'center', rowGap: 5, width: '40%' }}>
           <Text style={{ fontSize: 11, color: 'gray' }}>Used margin</Text>

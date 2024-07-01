@@ -1,7 +1,7 @@
 
 import * as SecureStore from 'expo-secure-store'
 import { Provider } from 'react-redux';
-import { useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -19,12 +19,16 @@ import BuyScreen from './screens/HomeScreen/BuyScreen';
 import SellScreen from './screens/HomeScreen/SellScreen';
 import store from './features/store';
 import { useAppDispatch, useAppSelector } from './features/hooks/hooks';
-import { setToken } from './features/slices/user';
+import { setLogout, setToken } from './features/slices/user';
 import LoginScreen from './screens/AuthScreen/LoginScreen';
 import SignupScreen from './screens/AuthScreen/SignupScreen';
 import * as SplashScreen from 'expo-splash-screen';
 import StockSearchScreen from './screens/StockSearchScreen/StockSearchScreen';
 import EditWatchListScreen from './screens/EditWatchListScreen/EditWatchListScreen';
+import { useLazyCheckTokenValidityQuery } from './features/slices/userApiSlice';
+import { ToastAndroid } from 'react-native';
+import auth from './features/helpers/auth';
+import SocketProvider from './app/provider/socketProvider';
 
 export default function App() {
 
@@ -57,7 +61,9 @@ const MainScreen = ({ }) => {
 
   const dispatch = useAppDispatch();
 
-  const userState  = useAppSelector(state=>state.user);
+  const userState = useAppSelector(state => state.user);
+
+  const [checkUserToken] = useLazyCheckTokenValidityQuery()
 
   let userToken = '';
 
@@ -65,28 +71,56 @@ const MainScreen = ({ }) => {
 
     async function restoreToken() {
 
-      
+
 
       try {
         let token = await SecureStore.getItemAsync('jwt');
 
         if (token) {
-         
+
           userToken = token;
-        }else{
-         
+
+        } else {
+
         }
       } catch (error) {
 
       }
 
+
+      if (userToken.length > 0) {
+
+
+        checkUserToken({}).then((res: any) => {
+
+          let response = res?.error?.data;
+
+
+
+          if (response?.error == true) {
+
+            auth.clearJWT(() => {
+              ToastAndroid.show(res?.data?.info, 3);
+              dispatch(setLogout())
+            })
+            return;
+          }
+        }).catch((error) => console.log(error))
+
+
+
+      }
+
+
+
+
       if (userToken?.length > 0) {
         dispatch(setToken(userToken));
       }
 
-      setTimeout(()=>{
+      setTimeout(() => {
         SplashScreen.hideAsync();
-      },2000)
+      }, 2000)
     }
 
     restoreToken();
@@ -98,39 +132,41 @@ const MainScreen = ({ }) => {
 
   return (
 
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <NavigationContainer >
+    <SocketProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <NavigationContainer >
 
 
-          <Stack.Navigator initialRouteName={userState.isLoggedIn == true ? 'HomeScreen':'LoginScreen'} >
+            <Stack.Navigator initialRouteName={userState.isLoggedIn == true ? 'HomeScreen' : 'LoginScreen'} >
 
-            {
-              userState.isLoggedIn==false ?<>
-                <Stack.Screen options={{ headerShown: false }} name="LoginScreen" component={LoginScreen} />
-                <Stack.Screen options={{ headerShown: false }} name="SignupScreen" component={SignupScreen} />
-              </>:
-              <>
-                  <Stack.Screen options={{ headerShown: false }} name="WatchListScreen" component={TabBarFinal} />
+              {
+                userState.isLoggedIn == false ? <>
+                  <Stack.Screen options={{ headerShown: false }} name="LoginScreen" component={LoginScreen} />
+                  <Stack.Screen options={{ headerShown: false }} name="SignupScreen" component={SignupScreen} />
+                </> :
+                  <>
+                    <Stack.Screen options={{ headerShown: false }} name="WatchListScreen" component={TabBarFinal} />
 
-                  <Stack.Screen options={{ headerShown: true, title: "Profile", headerTitleAlign: "center", cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }} name="UserProfileScreen" component={UserProfileScreen} />
-                  <Stack.Screen options={{ headerShown: true, headerStyle: { backgroundColor: '#e7e7e7' }, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerTitle: "Funds", headerTitleAlign: 'center' }} name="FundScreen" component={FundScreen} />
-                  <Stack.Screen options={{ headerShown: true, headerStyle: { backgroundColor: '#e7e7e7' }, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerTitle: "Connected Apps", headerTitleAlign: 'center' }} name="ConnectedAppScreen" component={ConnectedAppScreen} />
-                  <Stack.Screen options={{ headerShown: true, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerTitle: "Settings", headerTitleAlign: 'center' }} name="SettingScreen" component={SettingScreen} />
+                    <Stack.Screen options={{ headerShown: true, title: "Profile", headerTitleAlign: "center", cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }} name="UserProfileScreen" component={UserProfileScreen} />
+                    <Stack.Screen options={{ headerShown: true, headerStyle: { backgroundColor: '#e7e7e7' }, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerTitle: "Funds", headerTitleAlign: 'center' }} name="FundScreen" component={FundScreen} />
+                    <Stack.Screen options={{ headerShown: true, headerStyle: { backgroundColor: '#e7e7e7' }, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerTitle: "Connected Apps", headerTitleAlign: 'center' }} name="ConnectedAppScreen" component={ConnectedAppScreen} />
+                    <Stack.Screen options={{ headerShown: true, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerTitle: "Settings", headerTitleAlign: 'center' }} name="SettingScreen" component={SettingScreen} />
 
-                  <Stack.Screen options={{ headerShown: false }} name="BuyScreen" component={BuyScreen} />
-                  <Stack.Screen options={{ headerShown: false }} name="SellScreen" component={SellScreen} />
-                  <Stack.Screen options={{ headerShown: false, headerStyle: { backgroundColor: '#e7e7e7' }, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }} name="StockSearchScreen" component={StockSearchScreen} />
-                  <Stack.Screen options={{ headerShown: true, headerStyle: { backgroundColor: '#e7e7e7' }, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerTitle: "Edit watchlist", headerTitleAlign: 'center' }} name="EditWatchListScreen" component={EditWatchListScreen} />
+                    <Stack.Screen options={{ headerShown: false }} name="BuyScreen" component={BuyScreen} />
+                    <Stack.Screen options={{ headerShown: false }} name="SellScreen" component={SellScreen} />
+                    <Stack.Screen options={{ headerShown: false, headerStyle: { backgroundColor: '#e7e7e7' }, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }} name="StockSearchScreen" component={StockSearchScreen} />
+                    <Stack.Screen options={{ headerShown: true, headerStyle: { backgroundColor: '#e7e7e7' }, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, headerTitle: "Edit watchlist", headerTitleAlign: 'center' }} name="EditWatchListScreen" component={EditWatchListScreen} />
 
-              </>
-            }
-          </Stack.Navigator>
+                  </>
+              }
+            </Stack.Navigator>
 
 
-        </NavigationContainer>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView >
+          </NavigationContainer>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView >
+    </SocketProvider>
 
   )
 }

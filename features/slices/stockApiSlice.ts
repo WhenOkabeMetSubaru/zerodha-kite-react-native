@@ -1,6 +1,15 @@
+import { io } from "socket.io-client";
+import { EXTRAINFO_CONSTANTS } from "../../app/constants/extraInfo";
 import apiSlice from "../api/api";
 
-
+const createSocket = async () => {
+    let socket = await io(EXTRAINFO_CONSTANTS.SOCKET_SERVER_LINK_LOCAL,
+        {
+            transports: ['websocket']
+        }
+    )
+    return socket;
+}
 export const stockApiSlice = apiSlice.injectEndpoints({ //  // No base URL needed now
     endpoints: (builder) => ({
         getAllStocks: builder.query({
@@ -9,7 +18,7 @@ export const stockApiSlice = apiSlice.injectEndpoints({ //  // No base URL neede
         getStockByID: builder.query({
             query: ({ stockId }) => ({ url: `/api/v1/stocks/${stockId}`, method: 'GET' }),
         }),
-       
+
         addNewStock: builder.mutation({
             query: ({ data }) => ({ url: '/api/v1/stocks/add', method: 'POST', body: data }), // Adjusted path
         }),
@@ -22,10 +31,51 @@ export const stockApiSlice = apiSlice.injectEndpoints({ //  // No base URL neede
         getSearchStockByName: builder.query({ // Adjust path if needed
             query: ({ stockName }) => ({
                 url: `/api/v1/stocks/search/new`,
-                params:{name:stockName},
+                params: { name: stockName },
                 method: 'GET'
             }), // Assuming search by name
         }),
+        subscribeMultipleStocks: builder.query({
+
+            query: ({ watchId,stockIds }) => ({
+                url: `/api/v1/stocks/watchlist/${watchId}`,
+                method: 'GET',
+            }),
+
+            onCacheEntryAdded: async (arg, { updateCachedData, cacheEntryRemoved }) => {
+
+                const socket = createSocket();
+
+                try {
+                    
+                    (await socket).emit('subscribeClientToMultipleStock', arg.stockIds);
+
+                    (await socket).on('multiplestockdata', (data) => {
+                        
+                        updateCachedData((draft) => {
+                            
+                            draft.data.stocks = draft?.data?.stocks.map((stock: any) => {
+                                const existingStock = data.find((cachedStock: any) => cachedStock?._id === stock._id)
+                                return existingStock ? { ...stock, current_price: existingStock.current_price } : stock;
+                            })
+                           
+
+                 
+
+                        })
+
+                    })
+
+
+                } catch (error: any) {
+                    console.log("Error creating socket ", error.message)
+                } finally {
+                    await cacheEntryRemoved;
+                    (await socket).disconnect()
+                }
+
+            }
+        })
     }),
 });
 
@@ -36,6 +86,7 @@ export const {
     useUpdateStockByIDMutation,
     useDeleteStockByIDMutation,
     useGetSearchStockByNameQuery,
-    useLazyGetSearchStockByNameQuery
+    useLazyGetSearchStockByNameQuery,
+    useSubscribeMultipleStocksQuery
 } = stockApiSlice;
 

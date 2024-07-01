@@ -35,3 +35,9 @@ export interface STOCK_SEARCH_COLORS {
     STOCK_SCREEN_CHECK_BUTTON_COLOR:STOCK_SCREEN_CHECK_BUTTON_COLOR
 
 }
+
+export interface API_RESPONSE_DEFAULT {
+    error:boolean;
+    info:string;
+    data?:any;
+}

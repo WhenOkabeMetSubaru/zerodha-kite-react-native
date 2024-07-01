@@ -1,6 +1,8 @@
 export interface STOCK {
     _id:string;
     name: string;
+    complete_name:string;
+    current_price:string;
     stock_link: string;
     description: string;
     open: string;
