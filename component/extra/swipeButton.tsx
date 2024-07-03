@@ -1,10 +1,10 @@
-import { View, Text } from 'react-native'
+import { View, Text, Alert } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, { Extrapolation, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withClamp, withSpring, withTiming } from 'react-native-reanimated'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 
-const SwipeButtonCustom = ({ primaryColor ="#2a8af4"}) => {
+const SwipeButtonCustom = ({ primaryColor ="#2a8af4",callback}:{primaryColor?:string,callback:(args:any)=>void}) => {
 
     const translateX = useSharedValue(0);
 
@@ -20,6 +20,7 @@ const SwipeButtonCustom = ({ primaryColor ="#2a8af4"}) => {
         if (isToggled !== toggled) {
             setToggled(isToggled);
         }
+        callback(translateX);
     }
 
 
@@ -48,9 +49,14 @@ const SwipeButtonCustom = ({ primaryColor ="#2a8af4"}) => {
                 translateX.value = withSpring(0, { damping: 500,stiffness:300 });
             } else {
                 translateX.value = withSpring(205, { damping: 500 });
+                
                 runOnJS(handleComplete)(true)
+                
 
             }
+
+            
+            
         })
 
     const eStyle = useAnimatedStyle(() => {

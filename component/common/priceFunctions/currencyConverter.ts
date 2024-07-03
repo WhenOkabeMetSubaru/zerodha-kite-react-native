@@ -1,5 +1,10 @@
 
 
+/**
+ * 
+ * @param {number} digit
+ * @returns {string}
+ */
 export function handleConvertNumberToIndianSystem ({digit}:{digit:number}):string{
 
     const formatter = Intl.NumberFormat("en-IN",{
@@ -50,5 +55,20 @@ export function handleConvertNumberToIndianSystem ({digit}:{digit:number}):strin
     // }
 
     // return digit<0?'-':'+' + formattedAmount;
+
+}
+
+
+
+/**
+ * 
+ * @param {string} digit
+ * @returns {number}
+ */
+export const handleCurrencyIndianToInteger = (digit:string):number => {
+
+    let formattedNumber = parseFloat(digit.replace(/,/g, ''));
+
+    return parseFloat(formattedNumber.toFixed(2));
 
 }

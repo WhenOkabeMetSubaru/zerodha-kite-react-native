@@ -2,10 +2,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { STOCK_SEARCH_SCREEN_COLORS } from '../../../app/constants/colors'
 import { STOCK } from '../../../app/types/stock'
 import { useAddStockToWatchListMutation, useDeleteStockFromWatchListMutation } from '../../../features/slices/userApiSlice'
 import { FlatList } from 'react-native'
+import { STOCK_SEARCH_SCREEN_COLORS } from '../../../app/constants/colors'
+
 
 const StocksTabSearchScreen = ({stockData=[],watchListStockData=[],watchListId}:{stockData?:STOCK[],watchListStockData?:any,watchListId?:string}) => {
 
@@ -83,7 +84,7 @@ export const StockSearchStockComponent =({stock,isAdded,addStockToWatchList,dele
     return (
         <Pressable style={{ height: 80, paddingHorizontal: 20, backgroundColor: 'white', borderBottomWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <View style={{ flexDirection: 'row', columnGap: 10, alignItems: 'center',width:'70%' }}>
-                <View style={{ justifyContent: 'center', backgroundColor: STOCK_SEARCH_SCREEN_COLORS.STOCK_SEARCH_NSE_TAG_BACKGROUND_COLOR, alignItems: 'center', paddingHorizontal: 7, height: 25, borderRadius: 2 }}>
+                <View style={{ justifyContent: 'center', backgroundColor:STOCK_SEARCH_SCREEN_COLORS.STOCK_SEARCH_NSE_TAG_BACKGROUND_COLOR, alignItems: 'center', paddingHorizontal: 7, height: 25, borderRadius: 2 }}>
                     <Text style={{ color: STOCK_SEARCH_SCREEN_COLORS.STOCK_SEARCH_NSE_TAG_TEXT_COLOR, fontSize: 12 }}>NSE</Text>
 
                 </View>
@@ -95,7 +96,7 @@ export const StockSearchStockComponent =({stock,isAdded,addStockToWatchList,dele
             <View>
                 {
                     addedState == false?
-                        <Pressable onPress={handleAddStock} style={{ width: 25, borderWidth: 0.8, borderColor: STOCK_SEARCH_SCREEN_COLORS.STOCK_SEARCH_ADD_BUTTON_COLOR, height: 25, justifyContent: 'center', alignItems: 'center', borderRadius: 2 }}>
+                        <Pressable onPress={handleAddStock} style={{ width: 25, borderWidth: 0.8, borderColor:STOCK_SEARCH_SCREEN_COLORS.STOCK_SEARCH_ADD_BUTTON_COLOR, height: 25, justifyContent: 'center', alignItems: 'center', borderRadius: 2 }}>
                             <FeatherIcon size={16} color={STOCK_SEARCH_SCREEN_COLORS.STOCK_SEARCH_ADD_BUTTON_COLOR} name='plus' />
                         </Pressable>:
                         <Pressable onPress={handleDeleteStock} style={{ width: 25, backgroundColor: STOCK_SEARCH_SCREEN_COLORS.STOCK_SCREEN_CHECK_BUTTON_COLOR, height: 25, justifyContent: 'center', alignItems: 'center', borderRadius: 2 }}>

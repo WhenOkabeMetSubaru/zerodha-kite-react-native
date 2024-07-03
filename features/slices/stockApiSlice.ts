@@ -16,7 +16,7 @@ export const stockApiSlice = apiSlice.injectEndpoints({ //  // No base URL neede
             query: () => ({ url: '/api/v1/stocks/all', method: 'GET' }), // Adjusted path
         }),
         getStockByID: builder.query({
-            query: ({ stockId }) => ({ url: `/api/v1/stocks/${stockId}`, method: 'GET' }),
+            query: ({ stockId }) => ({ url: `/api/v1/stocks/single/${stockId}`, method: 'GET' }),
         }),
 
         addNewStock: builder.mutation({
@@ -75,6 +75,45 @@ export const stockApiSlice = apiSlice.injectEndpoints({ //  // No base URL neede
                 }
 
             }
+        }),
+        subscribeSingleStock: builder.query({
+
+            query: ({ stockId }) => ({
+                url: `/api/v1/stocks/single/${stockId}`,
+                method: 'GET',
+            }),
+
+            onCacheEntryAdded: async (arg, { updateCachedData, cacheEntryRemoved }) => {
+
+                const socket = createSocket();
+
+                try {
+
+                    (await socket).emit('subscribeClientToSingleStock', arg.stockId);
+
+                    (await socket).on(`${arg.stockId}`, (data) => {
+
+                        updateCachedData((draft) => {
+
+                            
+                            draft.data.current_price = data;
+
+
+
+
+                        })
+
+                    })
+
+
+                } catch (error: any) {
+                    console.log("Error creating socket ", error.message)
+                } finally {
+                    await cacheEntryRemoved;
+                    (await socket).disconnect()
+                }
+
+            }
         })
     }),
 });
@@ -87,6 +126,7 @@ export const {
     useDeleteStockByIDMutation,
     useGetSearchStockByNameQuery,
     useLazyGetSearchStockByNameQuery,
-    useSubscribeMultipleStocksQuery
+    useSubscribeMultipleStocksQuery,
+    useSubscribeSingleStockQuery
 } = stockApiSlice;
 

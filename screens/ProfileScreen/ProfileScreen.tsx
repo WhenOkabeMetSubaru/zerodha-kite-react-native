@@ -9,13 +9,13 @@ import { CircleSpecial } from '../../component/extra/circleSpecial'
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DynamicHeader from '../../component/dynamicHeader'
-import { primaryScreenTitleConstants } from '../../app/constants/screen'
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
 import auth from '../../features/helpers/auth'
 import { useAppDispatch } from '../../features/hooks/hooks'
 import { setLogout } from '../../features/slices/user'
 import { useGetUserByTokenQuery } from '../../features/slices/userApiSlice'
 import { USER } from '../../app/types/user'
+import { HEADER_PRIMARY_SCREEN_TITLE } from '../../app/types/global'
 
 const ProfileScreen = () => {
 
@@ -63,7 +63,7 @@ const ProfileScreen = () => {
     <>
       <SafeAreaView style={{ position: 'relative', flexDirection: 'column', flex: 1 }}>
         <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
-        <DynamicHeader screenName={primaryScreenTitleConstants.BIDS} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
+        <DynamicHeader screenName={HEADER_PRIMARY_SCREEN_TITLE.ACCOUNT} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
           <View style={{position:'relative',backgroundColor:'#e7e7e7',height:45}}>
             <View style={{ backgroundColor: "#e7e7e7", position: 'absolute', top:0,left: 0, right: 0 }}>
               <View style={{ paddingLeft: 15, paddingRight: 20, paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between',alignItems:'center' }}>

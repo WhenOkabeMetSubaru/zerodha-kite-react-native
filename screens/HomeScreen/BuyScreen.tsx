@@ -6,7 +6,10 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ScrollView } from 'react-native-gesture-handler'
 import { CustomRadioButton } from '../../component/radio'
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view'
-import { FirstAMOTabBuy, FirstCoverTabBuy, FirstIcebergTabBuy, FirstRegularTabBuy, SecondAMOTabBuy, SecondIcebergTabBuy, SecondRegularTabBuy } from '../../component/screens/BuyScreen/FirstTabPages'
+import {  FirstRegularTabBuy } from '../../component/screens/BuyScreen/FirstTabPages'
+import { useRoute } from '@react-navigation/native'
+import { useGetStockByIDQuery, useSubscribeSingleStockQuery } from '../../features/slices/stockApiSlice'
+import { STOCK } from '../../app/types/stock'
 
 
 const BuyScreen = ({ navigation }: { navigation: any }) => {
@@ -14,6 +17,12 @@ const BuyScreen = ({ navigation }: { navigation: any }) => {
     const [firstCheckState, setFirstCheckState] = useState(true);
     const [secondCheckState, setSecondCheckState] = useState(false)
 
+    const routeParams = useRoute<any>();
+
+    const stockDetailsSocket = useSubscribeSingleStockQuery({stockId:routeParams?.params?._id});
+
+    const stockData:STOCK = stockDetailsSocket?.data?.data;
+  
 
     const { top } = useSafeAreaInsets()
 
@@ -33,35 +42,45 @@ const BuyScreen = ({ navigation }: { navigation: any }) => {
         { key: 'third', title: 'Iceberg' }
     ]);
 
-    const FirstRoute = () => (
-      <View>
-        <Text>area</Text>
-      </View>
-    );
+   
 
-    const SecondRoute = () => (
-        <View style={{  }} ><Text>Tun</Text></View>
-    );
+    const firstOptionRenderScene  = ({route}:{route:any})=>{
+
+        switch(route.key){
+            case 'first':
+                return <FirstRegularTabBuy tabName='regular' stock={stockData}/>
+            
+            case 'second':
+                return <FirstRegularTabBuy tabName="co"  stock={stockData}/>
+
+            case 'third':
+                return <FirstRegularTabBuy tabName='amo'  stock={stockData}/>
+
+            case 'fourth':
+                return <FirstRegularTabBuy tabName='iceberg'  stock={stockData}/>
+        }
+    }
+
+    const secondOptionRenderScene = ({ route }: { route: any }) => {
+
+        switch (route.key) {
+            case 'first':
+                return <FirstRegularTabBuy tabName='regular' market_type='bse' stock={stockData}/>
+
+            case 'second':
+                return <FirstRegularTabBuy tabName='amo' market_type='bse' stock={stockData}/>
+
+            case 'third':
+                return <FirstRegularTabBuy tabName='iceberg' market_type='bse' stock={stockData}/>
+
+           
+        }
+    }
+
+   
 
 
     
-
-    
-
-    const firstOptionRenderScene = SceneMap({
-        first: FirstRegularTabBuy,
-        second: FirstCoverTabBuy,
-        third: FirstAMOTabBuy,
-        fourth: FirstIcebergTabBuy
-    });
-
-    const secondOptionRenderScene = SceneMap({
-        first: SecondRegularTabBuy,
-        second: SecondAMOTabBuy,
-        third: SecondIcebergTabBuy,
-       
-    });
-
    
 
 
@@ -71,15 +90,15 @@ const BuyScreen = ({ navigation }: { navigation: any }) => {
                 <View style={{ flexDirection: 'row', columnGap: 23, alignItems: 'center' }}>
                     <FeatherIcon onPress={()=>navigation.goBack()} name="arrow-left" size={25} />
                     <View style={{rowGap:4}}>
-                        <Text style={{ fontSize: 13,paddingLeft:2 }}>RELIANCE</Text>
+                        <Text style={{ fontSize: 13,paddingLeft:2 }}>{stockData?.name?.toUpperCase()}</Text>
                         <View style={{ flexDirection: 'row', columnGap: 12,alignItems:'center' }}>
                             <View style={{flexDirection:'row',columnGap:6}}>
                                 <CustomRadioButton activeColor={"#0471f7"} innerColor={"#e7e7e7"} checkFlag={firstCheckState} onPressFunction={() => { setFirstCheckState(true); setSecondCheckState(false); }} />
-                                <Text style={{ color: firstCheckState == true ? '#2a8af4' : 'gray', fontSize: 11 }}>NSE: ₹ 2,924.15</Text>
+                                <Text style={{ color: firstCheckState == true ? '#2a8af4' : 'gray', fontSize: 11 }}>NSE: ₹ {stockData?.current_price}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', columnGap: 6 }}>
                                 <CustomRadioButton activeColor={"#0471f7"} innerColor={"#e7e7e7"} checkFlag={secondCheckState} onPressFunction={() => { setFirstCheckState(false); setSecondCheckState(true); }} />
-                                <Text style={{ color: secondCheckState == true ? '#2a8af4' : 'gray', fontSize: 11 }}>BSE: ₹ 2,923.12</Text>
+                                <Text style={{ color: secondCheckState == true ? '#2a8af4' : 'gray', fontSize: 11 }}>BSE: ₹ {stockData?.current_price}</Text>
                            </View>
                         </View>
                     </View>
@@ -89,7 +108,7 @@ const BuyScreen = ({ navigation }: { navigation: any }) => {
                 </View>
 
             </View>
-         
+            
             {
                 firstCheckState == true && secondCheckState==false && <TabView
 

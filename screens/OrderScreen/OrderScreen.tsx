@@ -11,9 +11,9 @@ import AlertTab from '../../component/screens/OrderScreen/AlertTab';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import DynamicHeader from '../../component/dynamicHeader';
-import { primaryScreenTitleConstants } from '../../app/constants/screen';
 import { StatusBar } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
+import { HEADER_PRIMARY_SCREEN_TITLE } from '../../app/types/global';
 
 const OrderScreen = () => {
 
@@ -65,7 +65,7 @@ const OrderScreen = () => {
     <>
       <SafeAreaView style={{ position: 'relative', flexDirection: 'column', flex: 1 }}>
         <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
-        <DynamicHeader screenName={primaryScreenTitleConstants.ORDERS} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
+        <DynamicHeader screenName={HEADER_PRIMARY_SCREEN_TITLE.ORDERS} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
 
           <TabView
 

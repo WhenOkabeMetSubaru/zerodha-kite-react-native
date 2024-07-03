@@ -18,10 +18,10 @@ import { useNavigation } from '@react-navigation/native'
 import Animated, { Easing, Extrapolation, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import LineChartComponent from '../../component/charts/lineChart'
 import DynamicHeader from '../../component/dynamicHeader'
-import { primaryScreenTitleConstants } from '../../app/constants/screen'
 import { useGetAllWatchListByUserQuery, useGetUserByTokenQuery } from '../../features/slices/userApiSlice'
 import TabDataWatchListHome from '../../component/screens/HomeScreen/TabData'
 import { USER, WATCHLIST } from '../../app/types/user'
+import { HEADER_PRIMARY_SCREEN_TITLE } from '../../app/types/global'
 
 
 
@@ -111,7 +111,7 @@ const HomeScreen = () => {
     return (
         <SafeAreaView  style={{ position: 'relative', flexDirection: 'column', flex: 1 }}>
             <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
-            <DynamicHeader screenName={primaryScreenTitleConstants.WATCHLIST} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
+            <DynamicHeader screenName={HEADER_PRIMARY_SCREEN_TITLE.WATCHLIST} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
           
             {
                 getWatchlistData.isLoading==false?

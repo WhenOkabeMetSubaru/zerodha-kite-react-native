@@ -9,25 +9,23 @@ import EntypeIcon from 'react-native-vector-icons/Entypo'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DynamicHeader from '../../component/dynamicHeader';
 import { StatusBar } from 'react-native';
-import { primaryScreenTitleConstants } from '../../app/constants/screen';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
+import { HEADER_PRIMARY_SCREEN_TITLE } from '../../app/types/global';
+import Holdings from '../../component/screens/PortfolioScreen/Holdings';
+import Positions from '../../component/screens/PortfolioScreen/Positions';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const PortfolioScreen = () => {
 
   const [showOrderListDepth, setShowOrderListDepth] = useState(false);
 
+ 
+
   const [showStatus,setShowStatus] = useState(false);
 
   const scrollOffsetY = useSharedValue(0);
 
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["90%"], []);
 
-  const handleSheetChanges = useCallback((index: number) => {
-
-  }, [])
-
-  const layout = useWindowDimensions();
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -35,150 +33,28 @@ const PortfolioScreen = () => {
     { key: 'second', title: 'Positions' },
   ]);
 
-  const handleSearchType = () => {
+  
 
+  const renderScene = ({route}:{route:any})=>{
+
+    switch(route.key){
+      case 'first':
+        return <Holdings showStatus={showStatus} scrollOffsetY={scrollOffsetY}/>
+      
+      case 'second':
+        return <Positions showStatus={showStatus} scrollOffsetY={scrollOffsetY}/>
+
+      default:
+        return <></>
+    }
   }
-
-  const scrollHandler = useAnimatedScrollHandler((event) => {
-
-    scrollOffsetY.value = event.contentOffset.y;
-
-  });
-
-  const FirstRoute = () => (
-    <View style={{ flex: 1 }}>
-      <Animated.ScrollView
-        style={{ flex: 1, backgroundColor: 'white' }}
-        scrollEventThrottle={20}
-        onScroll={scrollHandler} showsVerticalScrollIndicator={false} >
-
-        <View style={{ height: 180, backgroundColor: "#e7e7e7", position: 'relative' }}>
-          <View style={{ backgroundColor: '#e7e7e7', height: 90 }}>
-
-          </View>
-          <View style={{ backgroundColor: "white", height: 90 }}>
-
-          </View>
-          <View style={{ height: 140, position: "absolute", backgroundColor: "white", bottom: 5, left: 20, right: 20, borderRadius: 4, elevation: showStatus==true?0:4 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, paddingLeft: 20, paddingRight: 20 }}>
-              <View style={{ width: '50%' }}>
-                <Text style={{ fontSize: 14, opacity: 0.4 }}>Invested</Text>
-                <Text style={{ fontSize: 18 }}>₹95,008.45</Text>
-              </View>
-              <View style={{ width: '50%' }}>
-                <Text style={{ fontSize: 14, opacity: 0.4 }}>Current</Text>
-                <Text style={{ fontSize: 18 }}>₹95,750.23</Text>
-              </View>
-            </View>
-
-            <View style={{ height: 0.8, backgroundColor: '#e7e7e7', marginLeft: 20, marginRight: 20, marginTop: 15 }} />
-
-            <View style={{ flexDirection: 'row', marginTop: 14, paddingLeft: 20, paddingRight: 20, justifyContent: "space-between", alignItems: 'center' }}>
-              <Text style={{ fontSize: 18, opacity: 0.3, width: '50%' }}>P&L</Text>
-              <View style={{ flexDirection: 'row', columnGap: 5, width: '50%', alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, color: 'green' }}>+747.23</Text>
-                <Text style={{ fontSize: 14, color: 'green', marginTop: 2 }}>+0.75%</Text>
-              </View>
-            </View>
-
-          </View>
-        </View>
-
-        <View style={{ height: 40, borderBottomWidth: 0.8, borderBottomColor: '#e7e7e7', paddingLeft: 25, paddingRight: 20, flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
-          <View style={{ flexDirection: 'row', columnGap: 15 }}>
-            <FeatherIcon name="search" size={15} color="#0484f7" style={{ opacity: 0.4 }} />
-            <EntypeIcon name="sound-mix" size={15} color="#0484f7" style={{ opacity: 0.4 }} />
-          </View>
-          <View style={{ flexDirection: 'row', columnGap: 6, alignItems: 'center' }}>
-            <FeatherIcon name="users" size={15} color="#0484f7" />
-            <Text style={{ fontSize: 12, color: "#0484f7" }}>
-              Family
-            </Text>
-            <CircleSpecial />
-            <Text style={{ fontSize: 12, color: "#0484f7" }}>
-              Tradebook
-            </Text>
-          </View>
-        </View>
-
-        <PortfolioScreenStockDetails avg='2254.03' changed_percentaged='2.01' qty='5' invested='10005.34' name='GLAND' ltp='2272.50' />
-        <PortfolioScreenStockDetails avg='2988.03' changed_percentaged='1.33' qty='15' invested='48005.14' name='RELIANCE' ltp='2930.47' />
-        <PortfolioScreenStockDetails avg='4757.03' changed_percentaged='5.32' qty='4' invested='22005.32' name='TCS' ltp='4783.20' />
-        <PortfolioScreenStockDetails avg='1651.03' changed_percentaged='0.12' qty='2' invested='3205.05' name="HDFCBANK" ltp='1650.44' />
-        <PortfolioScreenStockDetails avg='853.03' changed_percentaged='0.55' qty='10' invested='12005.30' name="ICICIBANK" ltp='1050.44' />
-        <PortfolioScreenStockDetails avg='1357.03' changed_percentaged='1.14' qty='10' invested='15005.11' name="INDUSIND BANK" ltp='1650.44' />
-
-        <View style={{ marginTop: 10, paddingLeft: 20, paddingRight: 20, paddingBottom: 100, flexDirection: 'row', alignItems: 'center', columnGap: 5 }}>
-          <FeatherIcon name='lock' size={15} color={"#0484f7"} />
-          <Text style={{ color: "#0484f7" }}>Authorization</Text>
-        </View>
-
-
-      </Animated.ScrollView>
-      <View style={{ borderTopWidth: 0.5, borderTopColor: '#e7e7e7', height: 40, backgroundColor: 'white', position: 'absolute', left: 0, right: 0, bottom: 0, paddingLeft: 20, paddingRight: 20, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text>
-          Day's P&L
-        </Text>
-        <View style={{ flexDirection: 'row', columnGap: 5, alignItems: "baseline" }}>
-          <Text style={{ fontSize: 14, color: 'green' }}>+1934.37</Text>
-          <Text style={{ fontSize: 11, color: 'green' }}>+1.63%</Text>
-        </View>
-      </View>
-    </View>
-
-  );
-
-  const SecondRoute = () => (
-    <Animated.ScrollView
-      style={{ flex: 1, backgroundColor: 'white' }}
-      scrollEventThrottle={20}
-      onScroll={scrollHandler} showsVerticalScrollIndicator={false} >
-
-      <View style={{ height: 120, backgroundColor: "#e7e7e7", position: 'relative' }}>
-        <View style={{ backgroundColor: '#e7e7e7', height: 60 }}>
-
-        </View>
-        <View style={{ backgroundColor: "white", height: 60 }}>
-
-        </View>
-
-        <View style={{ height: 90, position: "absolute", rowGap: 5, backgroundColor: "white", bottom: 15, left: 20, right: 20, borderRadius: 4, elevation: showStatus==true?0:4, justifyContent: 'center', alignItems: 'center' }}>
-
-          <Text style={{ opacity: 0.35, fontSize: 15 }}>Total P&L</Text>
-          <Text style={{ fontSize: 20, color: 'green' }}>+1,844.30</Text>
-
-        </View>
-      </View>
-
-      <View style={{ height: 40, borderBottomWidth: 0.8, borderBottomColor: '#e7e7e7', paddingLeft: 25, paddingRight: 20, flexDirection: 'row', justifyContent: "space-between", alignItems: 'center' }}>
-        <View style={{ flexDirection: 'row', columnGap: 15 }}>
-          <FeatherIcon name="search" size={15} color="#0484f7" style={{ opacity: 0.4 }} />
-          <EntypeIcon name="sound-mix" size={15} color="#0484f7" style={{ opacity: 0.4 }} />
-        </View>
-        <View style={{ flexDirection: 'row', columnGap: 6, alignItems: 'center' }}>
-          <CircleSpecial />
-          <Text style={{ fontSize: 12, color: "#0484f7" }}>
-            Analytics
-          </Text>
-        </View>
-      </View>
-
-      <PortfolioScreenPositionDetails name="NIFTY JUNE 24000 CE" ltp='135.44' />
-
-    </Animated.ScrollView>
-  );
-
-  const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute
-  });
 
 
   return (
     <>
       <SafeAreaView style={{ position: 'relative', flexDirection: 'column', flex: 1 }}>
         <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
-        <DynamicHeader screenName={primaryScreenTitleConstants.PORTFOLIO} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
+        <DynamicHeader screenName={HEADER_PRIMARY_SCREEN_TITLE.PORTFOLIO} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
 
         <TabView
 

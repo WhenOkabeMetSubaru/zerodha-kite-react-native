@@ -8,11 +8,11 @@ import EntypeIcon from 'react-native-vector-icons/Entypo'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
 import DynamicHeader from '../../component/dynamicHeader';
-import { primaryScreenTitleConstants } from '../../app/constants/screen';
 import { useSharedValue } from 'react-native-reanimated';
 import Auctions from '../../component/screens/BidScreen/Auctions';
 import Ipo from '../../component/screens/BidScreen/Ipo';
 import GovtSecurities from '../../component/screens/BidScreen/GovtSecurities';
+import { HEADER_PRIMARY_SCREEN_TITLE } from '../../app/types/global';
 
 
 const BidScreen = () => {
@@ -111,7 +111,7 @@ const BidScreen = () => {
     <>
       <SafeAreaView style={{ position: 'relative', flexDirection: 'column', flex: 1 }}>
         <StatusBar backgroundColor={"#e7e7e7"} barStyle={"dark-content"} />
-        <DynamicHeader screenName={primaryScreenTitleConstants.BIDS} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
+        <DynamicHeader screenName={HEADER_PRIMARY_SCREEN_TITLE.BIDS} scrollOffsetY={scrollOffsetY} showStatus={showStatus} setShowStatus={setShowStatus}>
 
       <TabView
 
